@@ -317,13 +317,3 @@ dim_seller
 | `pymysql` | Kết nối MySQL/MariaDB nếu dùng MySQL |
 
 ---
-
-## 11. Ghi chú
-
-- Dataset CSV không nên push lên GitHub nếu quá nặng.
-- Nên tạo file `.gitignore`.
-- Người chạy project cần sửa lại:
-  - đường dẫn CSV trong Pentaho
-  - database connection trong Pentaho
-  - connection string trong `app.py`
-  - username/password theo máy của mình
