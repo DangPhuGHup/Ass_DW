@@ -1,0 +1,6 @@
+﻿table_name,key_columns,duplicate_groups,duplicate_rows
+stg_orders,order_id,0,0
+stg_order_items,order_id + order_item_id,0,0
+stg_customers,customer_id,0,0
+stg_products,product_id,0,0
+stg_sellers,seller_id,0,0

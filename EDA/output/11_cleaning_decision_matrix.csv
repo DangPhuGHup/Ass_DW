@@ -1,0 +1,8 @@
+﻿detected_issue,evidence,decision,where_to_handle,etl_rule,reason,priority
+Missing product category,610 rows (1.8512%),Fill missing values with 'Unknown',build_dim_product.ktr,product_category_name NULL → 'Unknown',"Giữ lại sản phẩm để không mất dữ liệu bán hàng, đồng thời vẫn có nhóm Unknown cho dashboard.",High
+Missing delivered customer date,2965 rows (2.9817%),Do not impute. Exclude from delivery metrics in fact.,build_fact_sales.ktr,WHERE order_status = 'delivered' AND order_delivered_customer_date IS NOT NULL,Ngày giao thực tế không nên tự điền vì sẽ làm sai delivery_time_days và delivery_delay_days.,High
+Orders with non-delivered status,2963 rows (2.9797%),Keep only delivered orders for fact_sales,build_fact_sales.ktr,WHERE order_status = 'delivered',Dashboard phân tích doanh thu và giao hàng thực tế nên chỉ lấy đơn đã giao.,High
+Invalid money values,0 invalid/null money rows,No actual cleaning needed. Keep safety filter price > 0.,build_fact_sales.ktr,WHERE price > 0,"Price/freight_value hiện tại sạch, nhưng giữ filter để phòng dữ liệu lỗi khi pipeline chạy lại với nguồn khác.",Medium
+Very long delivery time > 120 days,43 rows,"Keep records, mark as outlier for analysis","EDA/reporting, not ETL removal",No deletion,Đây có thể là trường hợp vận hành đặc biệt. Không xóa khi chưa có bằng chứng là dữ liệu lỗi.,Low
+Duplicate business keys,0 duplicate rows,No duplicate removal needed,No action required,Optional SELECT DISTINCT in dimension build,Profiling không phát hiện duplicate key ở các bảng staging chính.,Low
+Unmatched relationship keys,0 unmatched keys,No relationship repair needed,No action required,Normal joins are safe,"Các khóa order_id, customer_id, product_id, seller_id đều match tốt giữa các bảng staging.",Low

@@ -1,0 +1,12 @@
+﻿issue_name,table_name,column_name,issue_count,issue_percent,severity,business_impact
+Missing delivered customer date,stg_orders,order_delivered_customer_date,2965,2.9817,Medium,Không thể tính delivery_time_days và delivery_delay_days cho các đơn thiếu ngày giao thực tế.
+Missing product category,stg_products,product_category_name,610,1.8512,Medium,Ảnh hưởng đến dashboard phân tích doanh thu theo danh mục sản phẩm.
+Missing product attribute: product_weight_g,stg_products,product_weight_g,2,0.0061,Low,Không ảnh hưởng trực tiếp đến fact_sales hiện tại vì dashboard chưa phân tích theo kích thước sản phẩm.
+Missing product attribute: product_length_cm,stg_products,product_length_cm,2,0.0061,Low,Không ảnh hưởng trực tiếp đến fact_sales hiện tại vì dashboard chưa phân tích theo kích thước sản phẩm.
+Missing product attribute: product_height_cm,stg_products,product_height_cm,2,0.0061,Low,Không ảnh hưởng trực tiếp đến fact_sales hiện tại vì dashboard chưa phân tích theo kích thước sản phẩm.
+Missing product attribute: product_width_cm,stg_products,product_width_cm,2,0.0061,Low,Không ảnh hưởng trực tiếp đến fact_sales hiện tại vì dashboard chưa phân tích theo kích thước sản phẩm.
+Orders with non-delivered status,stg_orders,order_status,2963,2.9797,Business Rule,Các đơn chưa giao thành công không nên được dùng để tính doanh thu và hiệu suất giao hàng thực tế.
+Invalid money values,stg_order_items,"price, freight_value",0,0.0,Low,Price/freight_value dùng để tính doanh thu. Nếu lỗi sẽ làm sai total_amount.
+Very long delivery time > 120 days,stg_orders,"order_purchase_timestamp, order_delivered_customer_date",43,0.0432,Low,Có thể là outlier về vận hành giao hàng. Chưa đủ bằng chứng để xóa.
+Duplicate business keys,all staging tables,primary business keys,0,0.0,Low,Duplicate key có thể làm nhân dòng trong dim/fact. Kết quả hiện tại không phát hiện duplicate.
+Unmatched relationship keys,staging relationships,"order_id, customer_id, product_id, seller_id",0,0.0,Low,"Nếu khóa không match, fact_sales sẽ không join được với dimension."
