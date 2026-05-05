@@ -514,6 +514,99 @@ with tab2:
     ))
     st.plotly_chart(fig6, use_container_width=True)
 
+    # ── Top Seller ──
+    st.markdown('<div class="section-label">Top Seller theo Doanh thu</div>',
+                unsafe_allow_html=True)
+
+    seller_df = (
+        fdf.groupby("seller_id", as_index=False)
+           .agg(
+               doanh_thu=("total_amount", "sum"),
+               so_don=("order_id", "nunique"),
+               gia_tri_tb=("total_amount", "mean"),
+           )
+           .sort_values("doanh_thu", ascending=False)
+           .head(15)
+           .reset_index(drop=True)
+    )
+    seller_df.index += 1  # bat dau tu 1
+    tong = seller_df["doanh_thu"].sum()
+    seller_df["% tong"] = (seller_df["doanh_thu"] / fdf["total_amount"].sum() * 100)
+
+    col_s1, col_s2 = st.columns([1.1, 1])
+
+    # Bar chart ngang
+    fig_sel = go.Figure(go.Bar(
+        x=seller_df["doanh_thu"],
+        y=seller_df["seller_id"].str[:12] + "…",
+        orientation="h",
+        marker=dict(
+            color=seller_df["doanh_thu"],
+            colorscale=[[0, "#E0E7FF"], [1, "#4338CA"]],
+            showscale=False,
+        ),
+        text=seller_df["doanh_thu"].map("R$ {:,.0f}".format),
+        textposition="outside",
+        textfont=dict(size=10, color=BLACK),
+        hovertemplate=(
+            "<b>Seller:</b> %{y}<br>"
+            "Doanh thu: R$ %{x:,.0f}<extra></extra>"
+        ),
+    ))
+    fig_sel.update_layout(chart_layout(
+        "Top 15 Seller theo Doanh thu",
+        xaxis_extra=dict(title=dict(text="Doanh thu (R$)", font=AXIS_FONT)),
+        yaxis_extra=dict(categoryorder="total ascending", showgrid=False,
+                         tickfont=dict(size=10, color=BLACK)),
+        height=460,
+        margin=dict(l=50, r=120, t=60, b=50),
+    ))
+    col_s1.plotly_chart(fig_sel, use_container_width=True)
+
+    # Bảng số liệu chi tiết
+    with col_s2:
+        st.markdown("""
+        <div style="font-size:13px; font-weight:600; color:#111827;
+                    margin-bottom:10px; margin-top:8px;">
+            Chi tiết Top 15 Seller
+        </div>
+        """, unsafe_allow_html=True)
+
+        table_df = seller_df[["seller_id", "doanh_thu", "so_don", "gia_tri_tb", "% tong"]].copy()
+        table_df["seller_id"] = table_df["seller_id"].str[:16] + "…"
+
+        st.dataframe(
+            table_df,
+            use_container_width=True,
+            height=420,
+            column_config={
+                "seller_id":   st.column_config.TextColumn("Seller ID"),
+                "doanh_thu":   st.column_config.NumberColumn(
+                    "Doanh thu (R$)", format="R$ %.0f"
+                ),
+                "so_don":      st.column_config.NumberColumn("Số đơn"),
+                "gia_tri_tb":  st.column_config.NumberColumn(
+                    "Giá trị TB (R$)", format="R$ %.0f"
+                ),
+                "% tong":      st.column_config.ProgressColumn(
+                    "% tổng DT", min_value=0, max_value=100, format="%.1f%%"
+                ),
+            },
+        )
+
+        # Insight nhanh
+        top1 = seller_df.iloc[0]
+        st.markdown(f"""
+        <div class="insight-box" style="margin-top:10px;">
+            <strong>Nhận xét:</strong> Seller dẫn đầu chiếm
+            <strong>{top1['% tong']:.1f}%</strong> tổng doanh thu với
+            <strong>{top1['so_don']:,} đơn</strong>.
+            Top 5 seller cộng lại chiếm
+            <strong>{seller_df.head(5)['% tong'].sum():.1f}%</strong>
+            — mức độ tập trung này cần theo dõi để tránh rủi ro phụ thuộc.
+        </div>
+        """, unsafe_allow_html=True)
+
 
 # ══════════════════════════════════════════════
 # TAB 3
